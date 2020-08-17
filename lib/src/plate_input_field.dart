@@ -6,6 +6,7 @@ import 'package:license_plate_number/src/plate_keyboard.dart';
 class PlateInputField extends StatefulWidget {
   const PlateInputField({
     this.placeHolder = '',
+    this.readOnly = false,
     this.styles = PlateStyles.dark,
     this.inputFieldWidth = 40,
     this.inputFieldHeight = 54,
@@ -17,6 +18,8 @@ class PlateInputField extends StatefulWidget {
 
   /// 车牌号
   final String placeHolder;
+
+  final bool readOnly;
 
   /// 主题
   final PlateStyles styles;
@@ -42,9 +45,6 @@ class PlateInputField extends StatefulWidget {
 
 class _PlateInputFieldState extends State<PlateInputField>
     with SingleTickerProviderStateMixin {
-  /// 车牌号码数组
-  final List<String> _plateNumbers = ["", "", "", "", "", "", "", ""];
-
   /// 当前光标位置
   int _cursorIndex = 0;
 
@@ -58,9 +58,10 @@ class _PlateInputFieldState extends State<PlateInputField>
   void initState() {
     super.initState();
     String plateNumber = widget.placeHolder;
+    List<String> plateNumbers = List.filled(8, "");
     if (plateNumber.isNotEmpty) {
       List<String> numbers = plateNumber.split('');
-      _plateNumbers.replaceRange(0, numbers.length, numbers);
+      plateNumbers.replaceRange(0, numbers.length, numbers);
       _cursorIndex = numbers.length;
     }
     _controller = AnimationController(
@@ -71,7 +72,7 @@ class _PlateInputFieldState extends State<PlateInputField>
     if (null == _keyboardController) {
       _keyboardController = KeyboardController();
     }
-    _keyboardController.plateNumbers = _plateNumbers;
+    _keyboardController.plateNumbers = plateNumbers;
     _keyboardController.onPlateNumberChanged = onPlateNumberChanged;
     _keyboardController.animationController = _controller;
   }
@@ -83,17 +84,18 @@ class _PlateInputFieldState extends State<PlateInputField>
   }
 
   void onPlateNumberChanged(int index, String value) {
-    _plateNumbers[index] = value;
+    List<String> plateNumbers = _keyboardController.getPlateNumbers();
+    plateNumbers[index] = value;
     if (value.isNotEmpty) {
       _cursorIndex = index < 7 ? index + 1 : 7;
-      if (index >= 7 && _cursorIndex >= 7) {
+      if (index >= 6 && _cursorIndex >= 6) {
         _keyboardController.hideKeyboard();
       }
     } else if (value.isEmpty) {
       _cursorIndex = index > 0 ? index - 1 : 0;
     }
     if (widget.onChanged != null) {
-      widget.onChanged(_plateNumbers, _plateNumbers.join());
+      widget.onChanged(plateNumbers, plateNumbers.join());
     }
     setState(() {});
   }
@@ -103,8 +105,10 @@ class _PlateInputFieldState extends State<PlateInputField>
     _keyboardController.cursorIndex = _cursorIndex;
     _keyboardController.styles = widget.styles;
     return WillPopScope(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        spacing: 4.0,
+        direction: Axis.horizontal,
         children: _buildInputFields(),
       ),
       onWillPop: () {
@@ -119,10 +123,11 @@ class _PlateInputFieldState extends State<PlateInputField>
   }
 
   List<Widget> _buildInputFields() {
+    List<String> plateNumbers = _keyboardController.getPlateNumbers();
     List<Widget> children = [];
-    for (int i = 0; i < _plateNumbers.length; i++) {
-      children.add(_buildSingleField(_plateNumbers[i], i));
-      if (1 == i) {
+    for (int i = 0; i < plateNumbers.length; i++) {
+      children.add(_buildSingleField(plateNumbers[i], i));
+      if (6 == i) {
         children.add(_buildSeparator());
       }
     }
@@ -132,9 +137,11 @@ class _PlateInputFieldState extends State<PlateInputField>
   Widget _buildSingleField(String data, int index) {
     bool focused = _cursorIndex == index;
     bool newEnergy = index == 7;
-    Border border = focused
-        ? widget.styles.plateInputFocusedBorder
-        : widget.styles.plateInputBorder;
+    Border border = widget.readOnly
+        ? widget.styles.plateInputBorderReadOnly
+        : focused
+            ? widget.styles.plateInputFocusedBorder
+            : widget.styles.plateInputBorder;
     var text = Text(
       data.isEmpty && newEnergy ? '新能源' : data,
       style: newEnergy && data.isEmpty
@@ -142,6 +149,7 @@ class _PlateInputFieldState extends State<PlateInputField>
           : widget.styles.plateInputFieldTextStyle,
     );
     var container = Container(
+      // color: widget.readOnly ? Colors.grey : Colors.black,
       width: widget.inputFieldWidth,
       height: widget.inputFieldHeight,
       alignment: Alignment.center,
@@ -162,29 +170,30 @@ class _PlateInputFieldState extends State<PlateInputField>
       radius: widget.styles.plateInputBorderRadius,
       padding: const EdgeInsets.all(0),
     );
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 2),
-      child: GestureDetector(
-        child: newEnergy ? newEnergyField : container,
-        onTap: () {
-          _cursorIndex = index;
-          _keyboardController.cursorIndex = _cursorIndex;
-          _keyboardController.showKeyboard(context);
-          setState(() {});
-        },
-      ),
+    return GestureDetector(
+      child: newEnergy ? newEnergyField : container,
+      onTap: widget.readOnly
+          ? () {}
+          : () {
+              _cursorIndex = index;
+              _keyboardController.cursorIndex = _cursorIndex;
+              _keyboardController.showKeyboard(context);
+              setState(() {});
+            },
     );
   }
 
   Widget _buildSeparator() {
     return Container(
-      width: 8,
-      height: 8,
-      decoration: ShapeDecoration(
-        shape: CircleBorder(),
-        color: widget.styles.plateSeparatorColor,
+      height: widget.inputFieldHeight,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Text("+"),
+          ),
+        ],
       ),
-      margin: EdgeInsets.symmetric(horizontal: 4),
     );
   }
 }
@@ -212,7 +221,12 @@ class KeyboardController {
   PlateStyles _styles;
   Function(int index, String value) _onPlateNumberChanged;
 
-  set plateNumbers(List<String> plateNumbers) => _plateNumbers = plateNumbers;
+  List<String> getPlateNumbers() => _plateNumbers;
+
+  set plateNumbers(List<String> plateNumbers) {
+    print(plateNumbers);
+    _plateNumbers = plateNumbers;
+  }
 
   set cursorIndex(int cursorIndex) => _cursorIndex = cursorIndex;
 

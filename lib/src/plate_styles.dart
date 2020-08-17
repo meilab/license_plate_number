@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 /// 车牌输入框和键盘样式
@@ -7,6 +8,7 @@ class PlateStyles {
     this.newEnergyPlaceHolderTextStyle = newEnergyPlaceHolderTextStyleDark,
     this.plateInputFieldColor = plateInputFieldColorLight,
     this.plateInputBorder = plateInputBorderLight,
+    this.plateInputBorderReadOnly = plateInputBorderGrey,
     this.plateInputFocusedBorder = plateInputFocusedBorderLight,
     this.plateInputBorderRadius = const Radius.circular(8.0),
     this.plateSeparatorColor = plateSeparatorColorLight,
@@ -27,6 +29,7 @@ class PlateStyles {
 
   /// 输入框边框
   final Border plateInputBorder;
+  final Border plateInputBorderReadOnly;
 
   /// 输入框获取焦点时的边框
   final Border plateInputFocusedBorder;
@@ -116,6 +119,13 @@ class PlateStyles {
   /// 明亮风格输入框边框
   static const Border plateInputBorderLight = Border.fromBorderSide(BorderSide(
     color: Color(0xFF333333),
+    width: 2,
+    style: BorderStyle.solid,
+  ));
+
+  /// 明亮风格输入框边框
+  static const Border plateInputBorderGrey = Border.fromBorderSide(BorderSide(
+    color: Colors.grey,
     width: 2,
     style: BorderStyle.solid,
   ));
