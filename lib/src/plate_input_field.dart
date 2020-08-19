@@ -3,6 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:license_plate_number/license_plate_number.dart';
 import 'package:license_plate_number/src/plate_keyboard.dart';
 
+const numberLength = 8;
+
 class PlateInputField extends StatefulWidget {
   const PlateInputField({
     this.placeHolder = '',
@@ -85,7 +87,11 @@ class _PlateInputFieldState extends State<PlateInputField>
 
   void onPlateNumberChanged(int index, String value) {
     List<String> plateNumbers = _keyboardController.getPlateNumbers();
-    plateNumbers[index] = value;
+    if (index >= plateNumbers.length) {
+      plateNumbers = plateNumbers + [value];
+    } else {
+      plateNumbers[index] = value;
+    }
     if (value.isNotEmpty) {
       _cursorIndex = index < 7 ? index + 1 : 7;
       if (index >= 6 && _cursorIndex >= 6) {
@@ -125,8 +131,9 @@ class _PlateInputFieldState extends State<PlateInputField>
   List<Widget> _buildInputFields() {
     List<String> plateNumbers = _keyboardController.getPlateNumbers();
     List<Widget> children = [];
-    for (int i = 0; i < plateNumbers.length; i++) {
-      children.add(_buildSingleField(plateNumbers[i], i));
+    for (int i = 0; i < numberLength; i++) {
+      final String numberStr = i < plateNumbers.length ? plateNumbers[i] : "";
+      children.add(_buildSingleField(numberStr, i));
       if (6 == i) {
         children.add(_buildSeparator());
       }
@@ -275,7 +282,7 @@ class KeyboardController {
     return _keyboardOverlay != null && _isKeyboardShowing;
   }
 
-  /// 移除悬浮窗口
+  /// 移除悬浮窗��
   void dispose() {
     if (_keyboardOverlay != null) {
       _keyboardOverlay.remove();
