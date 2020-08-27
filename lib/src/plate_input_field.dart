@@ -85,6 +85,18 @@ class _PlateInputFieldState extends State<PlateInputField>
     _keyboardController.dispose();
   }
 
+  bool checkBlank(List<String> plateNumbers) {
+    bool ret = false;
+    final int len = plateNumbers.length > 7 ? 7 : plateNumbers.length;
+    for (int i = 0; i < len; i++) {
+      if (plateNumbers[i] == '' || plateNumbers[i] == ' ') {
+        ret = true;
+        break;
+      }
+    }
+    return ret;
+  }
+
   void onPlateNumberChanged(int index, String value) {
     List<String> plateNumbers = _keyboardController.getPlateNumbers();
     if (index >= plateNumbers.length) {
@@ -94,7 +106,9 @@ class _PlateInputFieldState extends State<PlateInputField>
     }
     if (value.isNotEmpty) {
       _cursorIndex = index < 7 ? index + 1 : 7;
-      if (index >= 6 && _cursorIndex >= 6) {
+      if (index >= 6 &&
+          _cursorIndex >= 6 &&
+          checkBlank(plateNumbers) == false) {
         _keyboardController.hideKeyboard();
       }
     } else if (value.isEmpty) {
