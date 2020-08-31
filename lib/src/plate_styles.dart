@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+const double borderWidth = 1.0;
+
 /// 车牌输入框和键盘样式
 class PlateStyles {
   const PlateStyles({
@@ -62,7 +64,7 @@ class PlateStyles {
   /// 黑暗风格车牌号字体样式
   static const TextStyle newEnergyPlaceHolderTextStyleDark = TextStyle(
     color: Color(0xFFDDDDDD),
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: FontWeight.normal,
   );
 
@@ -109,7 +111,7 @@ class PlateStyles {
   /// 明亮风格车牌号字体样式
   static const TextStyle newEnergyPlaceHolderTextStyleLight = TextStyle(
     color: Color(0xFF666666),
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: FontWeight.normal,
   );
 
@@ -118,15 +120,16 @@ class PlateStyles {
 
   /// 明亮风格输入框边框
   static const Border plateInputBorderLight = Border.fromBorderSide(BorderSide(
-    color: Color(0xFF333333),
-    width: 2,
+    // color: Color(0xFF333333),
+    color: Colors.grey,
+    width: borderWidth,
     style: BorderStyle.solid,
   ));
 
   /// 明亮风格输入框边框
   static const Border plateInputBorderGrey = Border.fromBorderSide(BorderSide(
     color: Colors.grey,
-    width: 2,
+    width: borderWidth,
     style: BorderStyle.solid,
   ));
 
@@ -134,7 +137,7 @@ class PlateStyles {
   static const Border plateInputFocusedBorderLight =
       Border.fromBorderSide(BorderSide(
     color: Color(0xFF2196F3),
-    width: 2,
+    width: borderWidth,
     style: BorderStyle.solid,
   ));
 
