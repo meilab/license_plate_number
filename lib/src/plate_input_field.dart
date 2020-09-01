@@ -164,7 +164,7 @@ class _PlateInputFieldState extends State<PlateInputField>
             ? widget.styles.plateInputFocusedBorder
             : widget.styles.plateInputBorder;
     var text = Text(
-      data.isEmpty && newEnergy ? '新能源' : data,
+      data.isEmpty && newEnergy ? '' : data,
       style: newEnergy && data.isEmpty
           ? widget.styles.newEnergyPlaceHolderTextStyle
           : widget.styles.plateInputFieldTextStyle,
