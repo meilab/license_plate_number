@@ -178,7 +178,7 @@ class PlateStyles {
     plateInputFieldColor: plateInputFieldColorLight,
     plateInputBorder: plateInputBorderLight,
     plateInputFocusedBorder: plateInputFocusedBorderLight,
-    plateInputBorderRadius: const Radius.circular(8.0),
+    plateInputBorderRadius: const Radius.circular(4.0),
     plateSeparatorColor: plateSeparatorColorLight,
     keyboardBackgroundColor: keyboardBackgroundColorLight,
     keyboardButtonTextColor: keyboardButtonTextColorLight,
