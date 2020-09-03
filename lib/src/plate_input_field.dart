@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:license_plate_number/license_plate_number.dart';
 import 'package:license_plate_number/src/plate_keyboard.dart';
@@ -177,7 +178,9 @@ class _PlateInputFieldState extends State<PlateInputField>
       decoration: newEnergy
           ? null
           : BoxDecoration(
-              color: widget.styles.plateInputFieldColor,
+              color: widget.readOnly
+                  ? Colors.grey[200]
+                  : widget.styles.plateInputFieldColor,
               border: border,
               borderRadius:
                   BorderRadius.all(widget.styles.plateInputBorderRadius),
